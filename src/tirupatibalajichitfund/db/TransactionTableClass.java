@@ -177,17 +177,27 @@ public class TransactionTableClass {
         return dataset;
     }
 
-    public boolean addNewTransaction(TransactionData transaction) {
+     public boolean addNewTransaction(TransactionData transaction) {
         try {
-
-            stmt.executeUpdate("insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType"
+            String sql="insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType,"
                     + "ForTurn,Credit,Debit,Date) values('" + transaction.getReferenceKey() + "','" + transaction.getUID() + "',"
                     + "'" + transaction.getName() + "','" + transaction.getCFID() + "','" + transaction.getCName() + "',"
                     + "'" + transaction.getEnteries() + "','" + transaction.getTransactionType() + "','" + transaction.getForTurn() + "'"
-                    + "'" + transaction.getCredit() + "','" + transaction.getDebit() + "','" + transaction.getDate() + "')");
+                    + ",'" + transaction.getCredit() + "','" + transaction.getDebit() + "','" + transaction.getDate() + "')";
+            System.out.println("insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType,"
+                    + "ForTurn,Credit,Debit,Date) values('" + transaction.getReferenceKey() + "','" + transaction.getUID() + "',"
+                    + "'" + transaction.getName() + "','" + transaction.getCFID() + "','" + transaction.getCName() + "',"
+                    + "'" + transaction.getEnteries() + "','" + transaction.getTransactionType() + "','" + transaction.getForTurn() + "'"
+                    + ",'" + transaction.getCredit() + "','" + transaction.getDebit() + "','" + transaction.getDate() + "')");
+//            stmt.executeUpdate("insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType,"
+//                    + "ForTurn,Credit,Debit,Date) values('" + transaction.getReferenceKey() + "','" + transaction.getUID() + "',"
+//                    + "'" + transaction.getName() + "','" + transaction.getCFID() + "','" + transaction.getCName() + "',"
+//                    + "'" + transaction.getEnteries() + "','" + transaction.getTransactionType() + "','" + transaction.getForTurn() + "'"
+//                    + "'" + transaction.getCredit() + "','" + transaction.getDebit() + "','" + transaction.getDate() + "')");
+            stmt.executeUpdate(sql);
             return true;
         } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(null, "Unable to fetch Deleted Records");
+            JOptionPane.showMessageDialog(null, "Unable to add  Record");
             sqle.printStackTrace();
             return false;
         }

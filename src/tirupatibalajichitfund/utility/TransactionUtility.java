@@ -61,7 +61,20 @@ public class TransactionUtility {
                 data.setCredit(0.0);
                 break;
         }
-        TransactionTableClass.getInstance().addNewTransaction(data);
+	 new Thread() {
+            @Override
+            public void run() {
+                if(TransactionTableClass.getInstance().addNewTransaction(data)){
+                    showUserMessage("Transaction Added");
+                }else{
+                    showUserMessage("Transaction Failed");
+                }
+            }
+        }.start();
+    }
+
+    public void showUserMessage(String message){
+    	JOptionPane.showMessageDialog(null,message);
     }
 
     public String getCurrentDate() {
