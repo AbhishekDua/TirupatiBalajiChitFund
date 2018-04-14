@@ -90,14 +90,15 @@ public class TransactionTableClass {
     public ArrayList<TransactionData> getAllTransactionsForCFID(int cfid) {
         ArrayList<TransactionData> dataset = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("select * from TransactionTable where CFID=" + cfid);
-            System.out.println("select * from TransactionTable where CFID=" + cfid);
-            while (rs.next()) {
+            String sql="select * from TransactionTable where CFID=" + cfid + " AND TransactionType='0'";
+            rs1 = stmt.executeQuery(sql);
+            System.out.println(sql);
+            while (rs1.next()) {
 
-                dataset.add(new TransactionData(rs.getInt("TransactionId"), rs.getString("ReferenceKey"), rs.getInt("UID"),
-                        rs.getString("Name"), rs.getInt("CFID"), rs.getString("CName"), rs.getInt("Enteries"), rs.getInt("TransactionType"),
-                        rs.getInt("ForTurn"), rs.getDouble("Credit"), rs.getDouble("Debit"),
-                        rs.getString("Date")));
+                dataset.add(new TransactionData(rs1.getInt("TransactionId"), rs1.getString("ReferenceKey"), rs1.getInt("UID"),
+                        rs1.getString("Name"), rs1.getInt("CFID"), rs1.getString("CName"), rs1.getInt("Enteries"), rs1.getInt("TransactionType"),
+                        rs1.getInt("ForTurn"), rs1.getDouble("Credit"), rs1.getDouble("Debit"),
+                        rs1.getString("Date")));
             }
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(null, "Unable to fetch Transaction Records");
@@ -111,13 +112,13 @@ public class TransactionTableClass {
     public ArrayList<TransactionData> getAllTransactionsForUID(int uid) {
         ArrayList<TransactionData> dataset = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("select * from TransactionTable where uid=" + uid);
-            while (rs.next()) {
+            rs1 = stmt.executeQuery("select * from TransactionTable where uid=" + uid +" AND TransactionType='0'");
+            while (rs1.next()) {
 
-                dataset.add(new TransactionData(rs.getInt("TransactionId"), rs.getString("ReferenceKey"), rs.getInt("UID"),
-                        rs.getString("Name"), rs.getInt("CFID"), rs.getString("CName"), rs.getInt("Enteries"), rs.getInt("TransactionType"),
-                        rs.getInt("ForTurn"), rs.getDouble("Credit"), rs.getDouble("Debit"),
-                        rs.getString("Date")));
+                dataset.add(new TransactionData(rs1.getInt("TransactionId"), rs1.getString("ReferenceKey"), rs1.getInt("UID"),
+                        rs1.getString("Name"), rs1.getInt("CFID"), rs1.getString("CName"), rs1.getInt("Enteries"), rs1.getInt("TransactionType"),
+                        rs1.getInt("ForTurn"), rs1.getDouble("Credit"), rs1.getDouble("Debit"),
+                        rs1.getString("Date")));
             }
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(null, "Unable to fetch Transaction Records");
@@ -150,7 +151,7 @@ public class TransactionTableClass {
 
     public boolean deleteTransactionsForUid(int uid) {
         try {
-            stmt.executeUpdate("update TransactionTable set TransactionType=1 where TransactionType=0 AND UID='" + uid+"'");
+            stmt.executeUpdate("update TransactionTable set TransactionType=1 where TransactionType=0 AND UID='" + uid + "'");
             return true;
         } catch (SQLException ex) {
             Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
@@ -177,9 +178,9 @@ public class TransactionTableClass {
         return dataset;
     }
 
-     public boolean addNewTransaction(TransactionData transaction) {
+    public boolean addNewTransaction(TransactionData transaction) {
         try {
-            String sql="insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType,"
+            String sql = "insert into TransactionTable(ReferenceKey,UID,Name,CFID,CName,Enteries,TransactionType,"
                     + "ForTurn,Credit,Debit,Date) values('" + transaction.getReferenceKey() + "','" + transaction.getUID() + "',"
                     + "'" + transaction.getName() + "','" + transaction.getCFID() + "','" + transaction.getCName() + "',"
                     + "'" + transaction.getEnteries() + "','" + transaction.getTransactionType() + "','" + transaction.getForTurn() + "'"
@@ -202,52 +203,49 @@ public class TransactionTableClass {
             return false;
         }
     }
-    
-     public boolean deleteTransactionForTid(int tid) {
+
+    public boolean deleteTransactionForTid(int tid) {
         try {
             stmt.executeUpdate("update TransactionTable set TransactionType=1 where TransactionType=0 AND TransactionId=" + tid);
-          
+
             return true;
-        } 
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
     /*public ArrayList<TransactionData> getTransactionForTransactionId(int tid)
-    {
-        ArrayList <TransactionData> dataset=new ArrayList<>();
-        try
-        {
-            stmt.executeUpdate("select * from TransactionTable where TransactionId='"+tid+"'");
-            while (rs.next()) {
+     {
+     ArrayList <TransactionData> dataset=new ArrayList<>();
+     try
+     {
+     stmt.executeUpdate("select * from TransactionTable where TransactionId='"+tid+"'");
+     while (rs.next()) {
 
-                dataset.add(new TransactionData(rs.getInt("TransactionId"), rs.getString("ReferenceKey"), rs.getInt("UID"),
-                        rs.getString("Name"), rs.getInt("CFID"), rs.getString("CName"), rs.getInt("Enteries"), rs.getInt("TransactionType"),
-                        rs.getInt("ForTurn"), rs.getDouble("Credit"), rs.getDouble("Debit"),
-                        rs.getString("Date")));
-            }
-        } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(null, "Unable to fetch Transaction Records");
-            sqle.printStackTrace();
-        }
+     dataset.add(new TransactionData(rs.getInt("TransactionId"), rs.getString("ReferenceKey"), rs.getInt("UID"),
+     rs.getString("Name"), rs.getInt("CFID"), rs.getString("CName"), rs.getInt("Enteries"), rs.getInt("TransactionType"),
+     rs.getInt("ForTurn"), rs.getDouble("Credit"), rs.getDouble("Debit"),
+     rs.getString("Date")));
+     }
+     } catch (SQLException sqle) {
+     JOptionPane.showMessageDialog(null, "Unable to fetch Transaction Records");
+     sqle.printStackTrace();
+     }
 
-        return dataset;
+     return dataset;
         
-    }*/
-     
-     public TransactionData getTransactionForTransactionId(int tid)
-    {
-        TransactionData dataset=new TransactionData();
-        try
-        {
-            rs=stmt.executeQuery("select * from TransactionTable where TransactionId="+tid);
+     }*/
+
+    public TransactionData getTransactionForTransactionId(int tid) {
+        TransactionData dataset = new TransactionData();
+        try {
+            rs = stmt.executeQuery("select * from TransactionTable where TransactionId=" + tid);
             while (rs.next()) {
 
                 dataset.setTransactionID(rs.getInt("TransactionId"));
                 dataset.setReferenceKey(rs.getString("ReferenceKey"));
                 dataset.setUID(rs.getInt("UID"));
-                dataset.setCName(rs.getString("CName"));                
+                dataset.setCName(rs.getString("CName"));
                 dataset.setCFID(rs.getInt("CFID"));
                 dataset.setName(rs.getString("Name"));
                 dataset.setEnteries(rs.getInt("Enteries"));
@@ -262,13 +260,49 @@ public class TransactionTableClass {
             JOptionPane.showMessageDialog(null, "Unable to fetch Transaction Records");
             sqle.printStackTrace();
         }
-        if(dataset!=null)
+        if (dataset != null) {
             return dataset;
-        else {
-            JOptionPane.showMessageDialog(null,dataset.getTransactionID()+""+dataset.getCFID()+""+dataset.getName()+dataset.getDebit()+"-"+dataset.getCredit());
+        } else {
+            JOptionPane.showMessageDialog(null, dataset.getTransactionID() + "" + dataset.getCFID() + "" + dataset.getName() + dataset.getDebit() + "-" + dataset.getCredit());
             return null;
         }
-        
+
+    }
+
+    public double getSumDebitTransactionForAMemberInCommittee(int uid, int cfid) {
+        Double sum = 0.0;
+        String sql = "select sum(Debit) from TransactionTable where CFID=" + cfid + " AND uid=" + uid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Debit total for Memid" + uid + "and Cfid " + cfid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Debit from TransactionTable");
+        }
+
+        return sum;
+    }
+
+    public double getSumCreditTransactionForAMemberInCommittee(int uid, int cfid) {
+        Double sum = 0.0;
+        String sql = "select sum(Credit) from TransactionTable where CFID=" + cfid + " AND uid=" + uid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Credit total for Memid" + uid + "and Cfid " + cfid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Credit from TransactionTable");
+        }
+
+        return sum;
     }
 
 }

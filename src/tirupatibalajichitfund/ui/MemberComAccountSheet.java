@@ -278,7 +278,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
                 try {
                     TransactionUtility.getInstance().deleteTransaction(getSingleClicktid());
                     
-                    refresh();
+//                    refresh();
                 } /*catch(SQLException ex)
                 {
                     Logger.getLogger(MemberComAccountSheet.class.getName()).log(Level.SEVERE, null, ex);                
@@ -354,6 +354,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
                         dataset2 = dataset_old;
                         break;
                     }
+                    System.out.println("Cfid--"+getSingleClickCfid());
                     dataset2 = TransactionTableClass.getInstance().getAllTransactionsForCFID(getSingleClickCfid());
                     break;
                 case Constants.INMEMCOM:

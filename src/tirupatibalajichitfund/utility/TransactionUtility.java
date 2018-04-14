@@ -37,7 +37,7 @@ public class TransactionUtility {
     }
 
     public void addTransaction(MemberInfoData memberInfo, double amount, int forTurn, String date, String tag) {
-        TransactionData data = new TransactionData();
+        final TransactionData data = new TransactionData();
         data.setReferenceKey(memberInfo.getReferenceKey());
         data.setCFID(memberInfo.getCommittee().getCfid());
         data.setCName(memberInfo.getCommittee().getCname());
@@ -61,20 +61,20 @@ public class TransactionUtility {
                 data.setCredit(0.0);
                 break;
         }
-	 new Thread() {
+        new Thread() {
             @Override
             public void run() {
-                if(TransactionTableClass.getInstance().addNewTransaction(data)){
+                if (TransactionTableClass.getInstance().addNewTransaction(data)) {
                     showUserMessage("Transaction Added");
-                }else{
+                } else {
                     showUserMessage("Transaction Failed");
                 }
             }
         }.start();
     }
 
-    public void showUserMessage(String message){
-    	JOptionPane.showMessageDialog(null,message);
+    public void showUserMessage(String message) {
+        JOptionPane.showMessageDialog(null, message);
     }
 
     public String getCurrentDate() {
@@ -83,79 +83,93 @@ public class TransactionUtility {
         currentDate = sdf.format(new Date());
         return currentDate;
     }
-    public void deleteTransaction(final int tid)
-    {
+
+    public void deleteTransaction(final int tid) {
         //boolean res=false;
-        new Thread()
-        {
+        new Thread() {
             @Override
-            public void run()
-            {
-                boolean res=false;
-                try
-                {
-                    if(TransactionTableClass.getInstance().deleteTransactionForTid(tid)) {
-                       
-                        TransactionData data=TransactionTableClass.getInstance().getTransactionForTransactionId(tid);
-                        String refkey=data.getReferenceKey();   //for Member Info Table
-                        int uid=data.getUID();   //for All Member Table
-                        MemberData md=AllMemberClass.getInstance().getMember(uid);
-                        double credit=data.getCredit();
-                        double debit=data.getDebit();
+            public void run() {
+                try {
+                    if (TransactionTableClass.getInstance().deleteTransactionForTid(tid)) {
+
+                        TransactionData data = TransactionTableClass.getInstance().getTransactionForTransactionId(tid);
+                        String refkey = data.getReferenceKey();   //for Member Info Table
+                        int uid = data.getUID();   //for All Member Table
+                        int cfid = data.getCFID();
+                        handleTransactionTableChangesForTransaction(cfid, uid);
+                        //                        MemberData md=AllMemberClass.getInstance().getMember(uid);
+                        //                        double credit=data.getCredit();
+                        //                        double debit=data.getDebit();
                         //System.out.println("Credit: "+credit+" Debit: "+debit);
                         //System.out.println("Uid is "+uid+" Refkey--"+refkey);
-                        MemberInfoData mid=MemberInfoClass.getInstance().getDatasetForReferenceKey(refkey);
-                        if(mid!=null && credit!=0.0) {
-                            //Calculate new credit and update in memberinfo and allmember table
-                            if(MemberInfoClass.getInstance().calculateMemberInfoCredit(mid, credit))
-                            {
-                                //System.out.println("Refkey of meminfoclass is "+mid.getReferenceKey());
-                                res=AllMemberClass.getInstance().calculateMemberCredit(md, credit);
-                                res=true;
-                                
-                                
-                            }
-                            
-                            
-                            
-                        }  else if(mid!=null && debit!=0.0) {
-                       
-                            //Calculate new debit and update in memberinfo and allmember table
-                            //System.out.println("Refkey of meminfoclass debit is "+mid.getReferenceKey());
-                            if(MemberInfoClass.getInstance().calculateMemberInfoDebit(mid, debit))
-                            {
-                                res=AllMemberClass.getInstance().calculateMemberDebit(md, debit);
-                                res=true;
-                            }
-                           
-                        } else {
-                        
-                            res=false;
-                        }
-                            
+                        //                        MemberInfoData mid=MemberInfoClass.getInstance().getDatasetForReferenceKey(refkey);
+                        //                        if(mid!=null && credit!=0.0) {
+                        //                            //Calculate new credit and update in memberinfo and allmember table
+                        //                            if(MemberInfoClass.getInstance().calculateMemberInfoCredit(mid, credit))
+                        //                            {
+                        //                                //System.out.println("Refkey of meminfoclass is "+mid.getReferenceKey());
+                        //                                res=AllMemberClass.getInstance().calculateMemberCredit(md, credit);
+                        //                                res=true;
+                        //                                
+                        //                                
+                        //                            }
+                        //                            
+                        //                            
+                        //                            
+                        //                        }  else if(mid!=null && debit!=0.0) {
+                        //                       
+                        //                            //Calculate new debit and update in memberinfo and allmember table
+                        //                            //System.out.println("Refkey of meminfoclass debit is "+mid.getReferenceKey());
+                        //                            if(MemberInfoClass.getInstance().calculateMemberInfoDebit(mid, debit))
+                        //                            {
+                        //                                res=AllMemberClass.getInstance().calculateMemberDebit(md, debit);
+                        //                                res=true;
+                        //                            }
+                        //                           
+                        //                        } else {
+                        //                        
+                        //                            res=false;
+                        //                        }
+                        //                            
+                        //                    } else {
+                        //                        res=false;
+                        //                        JOptionPane.showMessageDialog(null,"Some error occurred while deleting");
+                        //                    }
+                        //                    if(res==true)
+                        //                    {
+                        //                        JOptionPane.showMessageDialog(null,"Transaction deleted successfully!");
+                        //                    }
+                        //                    else
+                        //                    {
+                        //                        JOptionPane.showMessageDialog(null, "Transaction not deleted properly!");
+                        //                    }
+
                     } else {
-                        res=false;
-                        JOptionPane.showMessageDialog(null,"Some error occurred while deleting");
+                        showUserMessage("Transaction not deleted properly!");
                     }
-                    if(res==true)
-                    {
-                        JOptionPane.showMessageDialog(null,"Transaction deleted successfully!");
-                    }
-                    else
-                    {
-                        JOptionPane.showMessageDialog(null, "Transaction not deleted properly!");
-                    }
-                }
-                catch (Exception ex) 
-                {
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Unable to delete transaction");
                     Logger.getLogger(TransactionUtility.class.getName()).log(Level.SEVERE, null, ex);
-                
+
                 }
             }
-            
+
         }.start();
-        
+
+    }
+
+    public boolean handleTransactionTableChangesForTransaction(final int cfid, final int uid) {
+        boolean res = false;
+        new Thread() {
+            @Override
+            public void run() {
+                double netDebit = TransactionTableClass.getInstance().getSumDebitTransactionForAMemberInCommittee(uid, cfid);
+                double netCredit = TransactionTableClass.getInstance().getSumCreditTransactionForAMemberInCommittee(uid, cfid);
+                showUserMessage("Deleted Successfully");
+            }
+        }.start();
+
+        return res;
     }
 
 }
