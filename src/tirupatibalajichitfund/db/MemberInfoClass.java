@@ -124,22 +124,18 @@ public class MemberInfoClass {
         }
 
     }
-    public boolean calculateMemberInfoCredit(MemberInfoData memberinfo,double credit)
-    {
-        try
-        {
+
+    public boolean calculateMemberInfoCredit(MemberInfoData memberinfo, double credit) {
+        try {
             //rs=stmt.executeQuery("Select * from memberinfo where ReferenceKey='"+refkey+"'");
-            double newcredit=memberinfo.getMember().getCredit()-credit;
-            stmt.executeUpdate("update memberinfo set Credit='"+newcredit+"' where ReferenceKey='"+memberinfo.getReferenceKey()+"'");
+            double newcredit = memberinfo.getMember().getCredit() - credit;
+            stmt.executeUpdate("update memberinfo set Credit='" + newcredit + "' where ReferenceKey='" + memberinfo.getReferenceKey() + "'");
             return true;
-        }
-        catch(SQLException ex)
-        {
+        } catch (SQLException ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Some Error Occurred in storing credit in memberinfo");
             return false;
-            
-            
+
         }
     }
 
@@ -155,30 +151,54 @@ public class MemberInfoClass {
         }
 
     }
-    public boolean calculateMemberInfoDebit(MemberInfoData memberinfo,double debit)
-    {
-        try
-        {
-            //rs=stmt.executeQuery("Select * from memberinfo where ReferenceKey='"+refkey+"'");
-            double newdebit=memberinfo.getMember().getDebit()-debit;
-            stmt.executeUpdate("update memberinfo set Debit='"+newdebit+"' where ReferenceKey='"+memberinfo.getReferenceKey()+"'");
+
+    public boolean changeMemberInfoCreditWithoutRefKey(int cfid, int uid, double credit) {
+        try {
+            String sql = "update memberinfo set Credit='" + credit + "' where "
+                    + "StatusCode=0 AND CFID=" + cfid + " AND UID=" + uid;
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
             return true;
+        } catch (Exception ex) {
+            Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Some Error Occurred in storing credit in memberinfo");
+            return false;
         }
-        catch(SQLException ex)
-        {
+
+    }
+
+    public boolean calculateMemberInfoDebit(MemberInfoData memberinfo, double debit) {
+        try {
+            //rs=stmt.executeQuery("Select * from memberinfo where ReferenceKey='"+refkey+"'");
+            double newdebit = memberinfo.getMember().getDebit() - debit;
+            stmt.executeUpdate("update memberinfo set Debit='" + newdebit + "' where ReferenceKey='" + memberinfo.getReferenceKey() + "'");
+            return true;
+        } catch (SQLException ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Some Error Occurred in storing debit in memberinfo");
             return false;
-            
-            
+
         }
-        
+
     }
 
     public boolean changeMemberInfoDebit(MemberInfoData memberinfo) {
         try {
             stmt.executeUpdate("update memberinfo set Debit='" + memberinfo.getMember().getDebit() + "' where "
                     + "StatusCode=0 AND ReferenceKey=" + memberinfo.getReferenceKey());
+            return true;
+        } catch (Exception ex) {
+            Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Some Error Occurred in storing debitt in memberinfo");
+            return false;
+        }
+    }
+
+    public boolean changeMemberInfoDebitWithoutRefKey(int cfid, int uid, double debit) {
+        try {
+            String sql = "update memberinfo set Debit='" + debit + "' where " + "StatusCode=0 AND CFID=" + cfid + " AND UID=" + uid;
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
             return true;
         } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
@@ -285,25 +305,25 @@ public class MemberInfoClass {
         MemberInfoData dataset = null;
         try {
             //System.out.println("select * from memberinfo where ReferenceKey='"+refkey+"'");
-            rs = stmt1.executeQuery("select * from memberinfo where ReferenceKey='"+refkey+"'");
+            rs = stmt1.executeQuery("select * from memberinfo where ReferenceKey='" + refkey + "'");
             rs.next();
             //String Kname=rs.getString("KName");
             //System.out.println("Kname--"+Kname);
-                MemberData member = new MemberData();
-                CommitteeData committee = new CommitteeData();
-                member.setkName(rs.getString("KName"));
-                member.setName(rs.getString("Name"));
-                member.setUid(rs.getInt("UID"));
-                member.setCredit(rs.getDouble("Credit"));
-                member.setDebit(rs.getDouble("Debit"));
-                committee.setCfid(rs.getInt("CFID"));
-                committee.setCname(rs.getString("CName"));
-                committee.setstartdate(rs.getString("StartDate"));
-                committee.setenddate(rs.getString("EndDate"));
-                committee.setTurn(rs.getInt("Turn"));
-               
-                dataset = new MemberInfoData(committee, member, rs.getString("ReferenceKey"), rs.getInt("Enteries"));
-            
+            MemberData member = new MemberData();
+            CommitteeData committee = new CommitteeData();
+            member.setkName(rs.getString("KName"));
+            member.setName(rs.getString("Name"));
+            member.setUid(rs.getInt("UID"));
+            member.setCredit(rs.getDouble("Credit"));
+            member.setDebit(rs.getDouble("Debit"));
+            committee.setCfid(rs.getInt("CFID"));
+            committee.setCname(rs.getString("CName"));
+            committee.setstartdate(rs.getString("StartDate"));
+            committee.setenddate(rs.getString("EndDate"));
+            committee.setTurn(rs.getInt("Turn"));
+
+            dataset = new MemberInfoData(committee, member, rs.getString("ReferenceKey"), rs.getInt("Enteries"));
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Unable to fetch data");
             dataset = null;

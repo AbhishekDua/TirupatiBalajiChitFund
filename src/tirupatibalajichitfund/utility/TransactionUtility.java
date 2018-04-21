@@ -28,6 +28,7 @@ import static tirupatibalajichitfund.utility.Constants.DEBIT;
 public class TransactionUtility {
 
     static TransactionUtility transactionUtility;
+    private boolean global_transaction_flag = false;
 
     public static TransactionUtility getInstance() {
         if (transactionUtility == null) {
@@ -36,7 +37,7 @@ public class TransactionUtility {
         return transactionUtility;
     }
 
-    public void addTransaction(MemberInfoData memberInfo, double amount, int forTurn, String date, String tag) {
+    public void addTransaction(final MemberInfoData memberInfo, double amount, int forTurn, String date, String tag) {
         final TransactionData data = new TransactionData();
         data.setReferenceKey(memberInfo.getReferenceKey());
         data.setCFID(memberInfo.getCommittee().getCfid());
@@ -65,7 +66,9 @@ public class TransactionUtility {
             @Override
             public void run() {
                 if (TransactionTableClass.getInstance().addNewTransaction(data)) {
+                    handleTransactionTableChangesForTransaction(memberInfo.getCommittee().getCfid(), memberInfo.getMember().getUid());
                     showUserMessage("Transaction Added");
+
                 } else {
                     showUserMessage("Transaction Failed");
                 }
@@ -159,17 +162,39 @@ public class TransactionUtility {
     }
 
     public boolean handleTransactionTableChangesForTransaction(final int cfid, final int uid) {
-        boolean res = false;
         new Thread() {
             @Override
             public void run() {
-                double netDebit = TransactionTableClass.getInstance().getSumDebitTransactionForAMemberInCommittee(uid, cfid);
-                double netCredit = TransactionTableClass.getInstance().getSumCreditTransactionForAMemberInCommittee(uid, cfid);
-                showUserMessage("Deleted Successfully");
+                try {
+                    double netDebit = TransactionTableClass.getInstance().getSumDebitTransactionForAMemberInCommittee(uid, cfid);
+                    double netCredit = TransactionTableClass.getInstance().getSumCreditTransactionForAMemberInCommittee(uid, cfid);
+                    double totalMemberDebit = TransactionTableClass.getInstance().getSumTotalDebitTransactionForAMember(uid);
+                    double totalMemberCredit = TransactionTableClass.getInstance().getSumTotalCreditTransactionForAMember(uid);
+                    if (AllMemberClass.getInstance().changeMemberDebit(uid, totalMemberDebit) && AllMemberClass.getInstance().changeMemberCredit(uid, totalMemberCredit)) {
+                        if (!global_transaction_flag) {
+                            global_transaction_flag = true;
+                        }
+                    } else {
+                        global_transaction_flag = false;
+                    }
+
+                    if (MemberInfoClass.getInstance().changeMemberInfoDebitWithoutRefKey(cfid, uid, netDebit) && MemberInfoClass.getInstance().changeMemberInfoCreditWithoutRefKey(cfid, uid, netCredit)) {
+                        if (!global_transaction_flag) {
+                            global_transaction_flag = true;
+                        }
+                    } else {
+                        global_transaction_flag = false;
+                    }
+
+                    showUserMessage("Values --netdebit " + netDebit + "  Net credit--" + netCredit + " Total memeber Debit,Credit-" + totalMemberDebit + " , " + totalMemberCredit);
+                    showUserMessage("Deleted Successfully");
+                } catch (Exception ex) {
+                    Logger.getLogger(TransactionUtility.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }.start();
-
-        return res;
+        System.out.println("global_transaction_flag--" + global_transaction_flag);
+        return global_transaction_flag;
     }
 
 }

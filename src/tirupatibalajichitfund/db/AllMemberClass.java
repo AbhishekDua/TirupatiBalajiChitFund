@@ -103,12 +103,12 @@ public class AllMemberClass {
         }
     }
 
-    public boolean changeMemberCredit(MemberData member) {
+    public boolean changeMemberCredit(int member_uuid,double credits) {
 
         try {
-            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Credit = '" + member.getCredit() + "' "
-                    + "WHERE allmembers.UID = '" + member.getUid() + "'");
-            JOptionPane.showMessageDialog(null, "Credit of member changed to  " + member.getCredit());
+            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Credit = '" + credits + "' "
+                    + "WHERE allmembers.UID = '" + member_uuid + "'");
+            JOptionPane.showMessageDialog(null, "Credit of member changed to  " +credits);
             return true;
         } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,31 +116,28 @@ public class AllMemberClass {
             return false;
         }
     }
-    public boolean calculateMemberCredit(MemberData member, double credit)
-    {
-        try
-        {
+
+    public boolean calculateMemberCredit(MemberData member, double credit) {
+        try {
             //member_rs=member_stmt.executeQuery("select * from tirupatichitfund.allmembers where allmembers.UID="+uid);
-            double newcredit=member.getCredit()-credit;
-            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Credit = '"+newcredit+"'" + "WHERE allmembers.UID='"+member.getUid()+"'");
-            JOptionPane.showMessageDialog(null,"Credit of member changed to "+newcredit);
+            double newcredit = member.getCredit() - credit;
+            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Credit = '" + newcredit + "'" + "WHERE allmembers.UID='" + member.getUid() + "'");
+            JOptionPane.showMessageDialog(null, "Credit of member changed to " + newcredit);
             return true;
-            
-        }
-        catch(Exception ex)
-        {
+
+        } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Some Error Occurred ");
             return false;
         }
     }
 
-    public boolean changeMemberDebit(MemberData member) {
+    public boolean changeMemberDebit(int member_uuid, double member_debit) {
 
         try {
-            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Debit = '" + member.getDebit() + "' "
-                    + "WHERE allmembers.UID = '" + member.getUid() + "'");
-            JOptionPane.showMessageDialog(null, "Name of member changed to  " + member.getDebit());
+            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Debit = '" + member_debit + "' "
+                    + "WHERE allmembers.UID = '" + member_uuid + "'");
+            JOptionPane.showMessageDialog(null, "Debit of member changed to  " + member_debit);
             return true;
         } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,20 +145,16 @@ public class AllMemberClass {
             return false;
         }
     }
-    
-    public boolean calculateMemberDebit(MemberData member, double debit)
-    {
-        try
-        {
+
+    public boolean calculateMemberDebit(MemberData member, double debit) {
+        try {
             //member_rs=member_stmt.executeQuery("select * from tirupatichitfund.allmembers where allmembers.UID="+uid);
-            double newdebit=member.getDebit()-debit;
-            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Debit = '"+newdebit+"'" + "WHERE allmembers.UID='"+member.getUid()+"'");
-            JOptionPane.showMessageDialog(null,"Debit of member changed to "+newdebit);
+            double newdebit = member.getDebit() - debit;
+            member_stmt.executeUpdate("UPDATE tirupatichitfund.allmembers SET Debit = '" + newdebit + "'" + "WHERE allmembers.UID='" + member.getUid() + "'");
+            JOptionPane.showMessageDialog(null, "Debit of member changed to " + newdebit);
             return true;
-            
-        }
-        catch(Exception ex)
-        {
+
+        } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Some Error Occurred ");
             return false;

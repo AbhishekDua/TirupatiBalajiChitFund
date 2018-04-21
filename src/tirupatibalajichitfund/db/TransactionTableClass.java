@@ -90,7 +90,7 @@ public class TransactionTableClass {
     public ArrayList<TransactionData> getAllTransactionsForCFID(int cfid) {
         ArrayList<TransactionData> dataset = new ArrayList<>();
         try {
-            String sql="select * from TransactionTable where CFID=" + cfid + " AND TransactionType='0'";
+            String sql = "select * from TransactionTable where CFID=" + cfid + " AND TransactionType='0'";
             rs1 = stmt.executeQuery(sql);
             System.out.println(sql);
             while (rs1.next()) {
@@ -112,7 +112,7 @@ public class TransactionTableClass {
     public ArrayList<TransactionData> getAllTransactionsForUID(int uid) {
         ArrayList<TransactionData> dataset = new ArrayList<>();
         try {
-            rs1 = stmt.executeQuery("select * from TransactionTable where uid=" + uid +" AND TransactionType='0'");
+            rs1 = stmt.executeQuery("select * from TransactionTable where uid=" + uid + " AND TransactionType='0'");
             while (rs1.next()) {
 
                 dataset.add(new TransactionData(rs1.getInt("TransactionId"), rs1.getString("ReferenceKey"), rs1.getInt("UID"),
@@ -287,6 +287,42 @@ public class TransactionTableClass {
         return sum;
     }
 
+    public double getSumDebitTransactionForACommittee(int cfid) {
+        Double sum = 0.0;
+        String sql = "select sum(Debit) from TransactionTable where CFID=" + cfid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Debit total for Cfid " + cfid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Debit for Committee from TransactionTable");
+        }
+
+        return sum;
+    }
+
+    public double getSumTotalDebitTransactionForAMember(int uid) {
+        Double sum = 0.0;
+        String sql = "select sum(Debit) from TransactionTable where  uid=" + uid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Debit total for Memid" + uid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Debit for Member from TransactionTable");
+        }
+
+        return sum;
+    }
+
     public double getSumCreditTransactionForAMemberInCommittee(int uid, int cfid) {
         Double sum = 0.0;
         String sql = "select sum(Credit) from TransactionTable where CFID=" + cfid + " AND uid=" + uid + " AND TransactionType='0'";
@@ -300,6 +336,42 @@ public class TransactionTableClass {
         } catch (SQLException ex) {
             Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Unable to fetch sum of Credit from TransactionTable");
+        }
+
+        return sum;
+    }
+
+    public double getSumCreditTransactionForACommittee(int cfid) {
+        Double sum = 0.0;
+        String sql = "select sum(Credit) from TransactionTable where CFID=" + cfid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Credit total for  Cfid " + cfid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Credit for Committee from TransactionTable");
+        }
+
+        return sum;
+    }
+
+    public double getSumTotalCreditTransactionForAMember(int uid) {
+        Double sum = 0.0;
+        String sql = "select sum(Credit) from TransactionTable where  uid=" + uid + " AND TransactionType='0'";
+        System.out.println(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                sum = rs.getDouble(1);
+            }
+            System.out.println("Value of Credit total for Memid" + uid + "is : " + sum);
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionTableClass.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Unable to fetch sum of Credit for Member from TransactionTable");
         }
 
         return sum;
