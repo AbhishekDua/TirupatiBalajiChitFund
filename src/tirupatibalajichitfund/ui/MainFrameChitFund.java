@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import tirupatibalajichitfund.db.AllCommitteeClass;
 import tirupatibalajichitfund.db.MemberInfoData;
 import tirupatibalajichitfund.db.TransactionData;
 
@@ -98,6 +99,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
         quickAddMemCom = new javax.swing.JMenuItem();
         menuMember = new javax.swing.JMenu();
         memberAllMember = new javax.swing.JMenuItem();
+        memberQuickAddTransaction = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tirupati Balaji Chit Fund");
@@ -207,6 +209,15 @@ public class MainFrameChitFund extends javax.swing.JFrame {
             }
         });
         menuMember.add(memberAllMember);
+
+        memberQuickAddTransaction.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        memberQuickAddTransaction.setText("Quick Add Transaction");
+        memberQuickAddTransaction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberQuickAddTransactionActionPerformed(evt);
+            }
+        });
+        menuMember.add(memberQuickAddTransaction);
 
         menuBar.add(menuMember);
 
@@ -396,6 +407,19 @@ public class MainFrameChitFund extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_quickAddMemComActionPerformed
 
+    private void memberQuickAddTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberQuickAddTransactionActionPerformed
+        // TODO add your handling code here:
+        if(memberQuickAddTransaction.equals(evt.getSource())){
+            QuickAddTransaction qat=new QuickAddTransaction();
+            try {
+                qat.QuickAddTransactionMainFrameSetup(AllCommitteeClass.getInstance().getAllCommitteesActive());
+            } catch (Exception ex) {
+                Logger.getLogger(MainFrameChitFund.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            qat.setVisible(true);
+        }
+    }//GEN-LAST:event_memberQuickAddTransactionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -444,6 +468,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
     private javax.swing.JMenuItem fileRefresh;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem memberAllMember;
+    private javax.swing.JMenuItem memberQuickAddTransaction;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuCommittee;
     private javax.swing.JMenu menuFile;

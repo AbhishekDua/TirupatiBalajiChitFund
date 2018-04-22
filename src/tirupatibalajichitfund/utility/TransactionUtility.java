@@ -37,7 +37,7 @@ public class TransactionUtility {
         return transactionUtility;
     }
 
-    public void addTransaction(final MemberInfoData memberInfo, double amount, int forTurn, String date, String tag) {
+    public boolean addTransaction(final MemberInfoData memberInfo, double amount, int forTurn, String date, String tag) {
         final TransactionData data = new TransactionData();
         data.setReferenceKey(memberInfo.getReferenceKey());
         data.setCFID(memberInfo.getCommittee().getCfid());
@@ -66,14 +66,14 @@ public class TransactionUtility {
             @Override
             public void run() {
                 if (TransactionTableClass.getInstance().addNewTransaction(data)) {
-                    handleTransactionTableChangesForTransaction(memberInfo.getCommittee().getCfid(), memberInfo.getMember().getUid());
-                    showUserMessage("Transaction Added");
+                    handleTransactionTableChangesForTransaction(memberInfo.getCommittee().getCfid(), memberInfo.getMember().getUid(), "ADD");
 
                 } else {
                     showUserMessage("Transaction Failed");
                 }
             }
         }.start();
+        return global_transaction_flag;
     }
 
     public void showUserMessage(String message) {
@@ -87,7 +87,7 @@ public class TransactionUtility {
         return currentDate;
     }
 
-    public void deleteTransaction(final int tid) {
+    public boolean deleteTransaction(final int tid) {
         //boolean res=false;
         new Thread() {
             @Override
@@ -99,7 +99,8 @@ public class TransactionUtility {
                         String refkey = data.getReferenceKey();   //for Member Info Table
                         int uid = data.getUID();   //for All Member Table
                         int cfid = data.getCFID();
-                        handleTransactionTableChangesForTransaction(cfid, uid);
+                        handleTransactionTableChangesForTransaction(cfid, uid, "DELETE");
+
                         //                        MemberData md=AllMemberClass.getInstance().getMember(uid);
                         //                        double credit=data.getCredit();
                         //                        double debit=data.getDebit();
@@ -146,9 +147,9 @@ public class TransactionUtility {
                         //                    {
                         //                        JOptionPane.showMessageDialog(null, "Transaction not deleted properly!");
                         //                    }
-
                     } else {
                         showUserMessage("Transaction not deleted properly!");
+
                     }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Unable to delete transaction");
@@ -158,10 +159,10 @@ public class TransactionUtility {
             }
 
         }.start();
-
+        return global_transaction_flag;
     }
 
-    public boolean handleTransactionTableChangesForTransaction(final int cfid, final int uid) {
+    public boolean handleTransactionTableChangesForTransaction(final int cfid, final int uid, final String action) {
         new Thread() {
             @Override
             public void run() {
@@ -180,6 +181,12 @@ public class TransactionUtility {
 
                     if (MemberInfoClass.getInstance().changeMemberInfoDebitWithoutRefKey(cfid, uid, netDebit) && MemberInfoClass.getInstance().changeMemberInfoCreditWithoutRefKey(cfid, uid, netCredit)) {
                         if (!global_transaction_flag) {
+                            if (action.equals("ADD")) {
+                                showUserMessage("Added Successfully");
+                            }
+                            if (action.equals("DELETE")) {
+                                showUserMessage("Deleted Successfully");
+                            }
                             global_transaction_flag = true;
                         }
                     } else {
@@ -187,9 +194,10 @@ public class TransactionUtility {
                     }
 
                     showUserMessage("Values --netdebit " + netDebit + "  Net credit--" + netCredit + " Total memeber Debit,Credit-" + totalMemberDebit + " , " + totalMemberCredit);
-                    showUserMessage("Deleted Successfully");
+
                 } catch (Exception ex) {
                     Logger.getLogger(TransactionUtility.class.getName()).log(Level.SEVERE, null, ex);
+                    showUserMessage("Failed");
                 }
             }
         }.start();

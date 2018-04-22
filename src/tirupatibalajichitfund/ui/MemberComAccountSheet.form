@@ -26,12 +26,11 @@
               <Component id="jScrollPane1" min="-2" pref="1458" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="addDebitButton" max="32767" attributes="0"/>
+                  <Component id="addTransactionButton" max="32767" attributes="0"/>
                   <Component id="addCreditButton" pref="321" max="32767" attributes="0"/>
                   <Component id="cancelButton" max="32767" attributes="0"/>
                   <Component id="deleteButton" max="32767" attributes="0"/>
                   <Component id="refreshButton" max="32767" attributes="0"/>
-                  <Component id="jSpinner1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -42,9 +41,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="752" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="addDebitButton" min="-2" pref="64" max="-2" attributes="0"/>
+                      <Component id="addTransactionButton" min="-2" pref="64" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="addCreditButton" min="-2" pref="69" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -53,9 +52,7 @@
                       <Component id="deleteButton" min="-2" pref="68" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="refreshButton" min="-2" pref="68" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jSpinner1" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="320" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -157,10 +154,13 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="addDebitButton">
+    <Component class="javax.swing.JButton" name="addTransactionButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="ADD DEBIT"/>
+        <Property name="text" type="java.lang.String" value="ADD TRANSACTION"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addTransactionButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="addCreditButton">
       <Properties>
@@ -193,8 +193,6 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JSpinner" name="jSpinner1">
     </Component>
   </SubComponents>
 </Form>

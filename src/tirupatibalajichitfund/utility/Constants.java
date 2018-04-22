@@ -22,5 +22,7 @@ public class Constants {
     public static final String MEMBER = "MEMBER";
 
     public static final String COMMITTEE = "COMMITTEE";
+    
+    public static final String QUICK_ADD = "QUICK_ADD";
 
 }

@@ -318,7 +318,7 @@ public class All_Member_Panel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Please select a member");
             }
             ArrayList<TransactionData> dataset = TransactionTableClass.getInstance().getAllTransactionsForUID(getSingleClickuid());
-            MainFrameChitFund.getInstance().setupTransactionTable(dataset, getSingleClickname(), Constants.MEMBER);
+            MainFrameChitFund.getInstance().setupTransactionTable(dataset, getSingleClickuid()+"_"+getSingleClickname(), Constants.MEMBER);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error Occurred while fetching committee inside members");
             Logger.getLogger(All_Committee_Panel.class.getName()).log(Level.SEVERE, null, ex);

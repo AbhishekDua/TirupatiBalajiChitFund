@@ -202,7 +202,7 @@ public class MemberInfoClass {
             return true;
         } catch (Exception ex) {
             Logger.getLogger(AllCommitteeClass.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Some Error Occurred in storing debitt in memberinfo");
+            JOptionPane.showMessageDialog(null, "Some Error Occurred in storing debit in memberinfo");
             return false;
         }
     }

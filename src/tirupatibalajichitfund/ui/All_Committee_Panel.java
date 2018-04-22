@@ -337,7 +337,7 @@ public class All_Committee_Panel extends javax.swing.JPanel {
         }
         try {
             ArrayList<TransactionData> dataset = TransactionTableClass.getInstance().getAllTransactionsForCFID(getSingleClickCfid());
-            MainFrameChitFund.getInstance().setupTransactionTable(dataset, getSingleClickCname(), Constants.COMMITTEE);
+            MainFrameChitFund.getInstance().setupTransactionTable(dataset, getSingleClickCfid()+"_"+getSingleClickCname(), Constants.COMMITTEE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Error Occurred whilefetching members inside committee");
             Logger.getLogger(All_Committee_Panel.class.getName()).log(Level.SEVERE, null, ex);

@@ -13,9 +13,13 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import tirupatibalajichitfund.db.AllCommitteeClass;
+import tirupatibalajichitfund.db.AllMemberClass;
+import tirupatibalajichitfund.db.CommitteeData;
 import tirupatibalajichitfund.db.TransactionData;
 import tirupatibalajichitfund.db.MemberInfoData;
 import tirupatibalajichitfund.db.MemberData;
+import tirupatibalajichitfund.db.MemberInfoClass;
 import tirupatibalajichitfund.db.TransactionTableClass;
 import tirupatibalajichitfund.utility.Constants;
 import tirupatibalajichitfund.utility.TransactionUtility;
@@ -34,7 +38,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
     String name;           //Member Name
     int tid;               //Transaction ID
     int row;
-    int cfid = -10, uid = -10;
+    int cfid = -10, uid = -10, enteries = -1;
     String TAG = "";
     String given_heading = "";
     String refid;
@@ -70,6 +74,12 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
         deleteButton.setEnabled(false);
         given_heading = heading;
         TAG = tag;
+        System.out.println(tag);
+        if (TAG.equals(Constants.INMEMCOM) || TAG.equals(Constants.INCOMMEM)) {
+            this.parseReferenceKey();
+        } else {
+            parseUidorCfid(TAG);
+        }
         transactiontable = TransactionTableClass.getInstance();
         dtm = new DefaultTableModel(0, 0) {
             @Override
@@ -113,6 +123,14 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
 
     }
 
+    private void parseUidorCfid(String Tag) {
+        if (Tag.equals(Constants.COMMITTEE)) {
+            cfid = Integer.parseInt(given_heading.split("_")[0]);
+        } else if (Tag.equals(Constants.MEMBER)) {
+            uid = Integer.parseInt(given_heading.split("_")[0]);
+        }
+    }
+
     private void setSingleClicktid(int tid) {
         this.tid = tid;
     }
@@ -148,12 +166,11 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         allTransactionTable = new javax.swing.JTable();
-        addDebitButton = new javax.swing.JButton();
+        addTransactionButton = new javax.swing.JButton();
         addCreditButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
-        jSpinner1 = new javax.swing.JSpinner();
 
         setPreferredSize(new java.awt.Dimension(1600, 800));
 
@@ -190,7 +207,12 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(allTransactionTable);
 
-        addDebitButton.setText("ADD DEBIT");
+        addTransactionButton.setText("ADD TRANSACTION");
+        addTransactionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addTransactionButtonActionPerformed(evt);
+            }
+        });
 
         addCreditButton.setText("ADD CREDIT");
         addCreditButton.addActionListener(new java.awt.event.ActionListener() {
@@ -229,12 +251,11 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1458, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(addDebitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addTransactionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(addCreditButton, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
                     .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSpinner1))
+                    .addComponent(refreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -242,9 +263,9 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 752, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(addDebitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addTransactionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addCreditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -253,9 +274,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 320, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -269,20 +288,20 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
         // TODO add your handling code here:
         if (deleteButton.equals(evt.getSource())) {
             /*if (getSingleClickrow() < 0 || getSingleClickname() == null || getSingleClicktid() < 10000000)
-            {
-                JOptionPane.showMessageDialog(this,"Please select a transaction to delete: ");
-                return;
-            }*/
+             {
+             JOptionPane.showMessageDialog(this,"Please select a transaction to delete: ");
+             return;
+             }*/
             int dialogres = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this transaction?");
             if (dialogres == JOptionPane.YES_OPTION) {
                 try {
                     TransactionUtility.getInstance().deleteTransaction(getSingleClicktid());
-                    
+
 //                    refresh();
                 } /*catch(SQLException ex)
-                {
-                    Logger.getLogger(MemberComAccountSheet.class.getName()).log(Level.SEVERE, null, ex);                
-                }*/ catch (Exception ex) {
+                 {
+                 Logger.getLogger(MemberComAccountSheet.class.getName()).log(Level.SEVERE, null, ex);                
+                 }*/ catch (Exception ex) {
                     Logger.getLogger(MemberComAccountSheet.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
@@ -323,7 +342,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
             deleteButton.setEnabled(true);
             cancelButton.setEnabled(true);
             addCreditButton.setEnabled(false);
-            addDebitButton.setEnabled(false);
+            addTransactionButton.setEnabled(false);
 
         }
 
@@ -333,11 +352,61 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
         // TODO add your handling code here:
         deleteButton.setEnabled(false);
         addCreditButton.setEnabled(true);
-        addDebitButton.setEnabled(true);
+        addTransactionButton.setEnabled(true);
         refreshButton.setEnabled(true);
         allTransactionTable.clearSelection();
         cancelButton.setEnabled(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void parseReferenceKey() {
+        if (!this.given_heading.isEmpty()) {
+            this.uid = Integer.parseInt(given_heading.substring(0, 4));
+            System.out.println(uid + "");
+            String[] temp = given_heading.split("_");
+            this.cfid = Integer.parseInt(temp[2]);
+            System.out.println(cfid + "--");
+            this.enteries = Integer.parseInt(temp[4]);
+            System.out.println(enteries + "");
+        }
+    }
+
+    private void addTransactionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTransactionButtonActionPerformed
+        // TODO add your handling code here:
+        if (addTransactionButton.equals(evt.getSource())) {
+            if (!given_heading.trim().isEmpty()) {
+//                double val = Double.parseDouble(JOptionPane.showInputDialog("Please enter the amount"));
+                try {
+
+                    System.out.println(cfid + "--" + uid);
+
+                    QuickAddTransaction quickAddTransaction = new QuickAddTransaction();
+                    if (TAG.equals(Constants.INCOMMEM) || TAG.equals(Constants.INMEMCOM) && cfid != -10 && uid != -10) {
+                        CommitteeData com = AllCommitteeClass.getInstance().getCommittee(cfid);
+                        MemberData member = AllMemberClass.getInstance().getMember(uid);
+                        MemberInfoData meminf = new MemberInfoData(com, member, given_heading, enteries);
+                        quickAddTransaction.QuickAddTransactionSetup(member, com, given_heading, enteries, TAG);
+                    }
+                    if (TAG.equals(Constants.COMMITTEE) && cfid != -10) {
+                        CommitteeData com = AllCommitteeClass.getInstance().getCommittee(cfid);
+                        ArrayList<MemberInfoData> memberList = MemberInfoClass.getInstance().getDatasetForCfid(cfid);
+                        quickAddTransaction.QuickAddTransactionSetup(memberList, com, given_heading, TAG);
+                    }
+                    if (TAG.equals(Constants.MEMBER) && uid != -10) {
+                        MemberData member = AllMemberClass.getInstance().getMember(uid);
+                        ArrayList<MemberInfoData> committeeList = MemberInfoClass.getInstance().getDatasetForUID(uid);
+                        quickAddTransaction.QuickAddTransactionSetup(committeeList, member, given_heading, TAG);
+                    }
+                    quickAddTransaction.setVisible(true);
+//                    TransactionUtility.getInstance().addTransaction(meminf, val, 1, "", Constants.DEBIT);
+                } catch (Exception ex) {
+                    Logger.getLogger(MemberComAccountSheet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                System.out.println(cfid + "--" + uid + "--" + given_heading);
+            }
+        }
+    }//GEN-LAST:event_addTransactionButtonActionPerformed
     public void refresh() throws Exception {
         if (TAG != null) {
             ArrayList<TransactionData> dataset2;
@@ -354,7 +423,7 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
                         dataset2 = dataset_old;
                         break;
                     }
-                    System.out.println("Cfid--"+getSingleClickCfid());
+                    System.out.println("Cfid--" + getSingleClickCfid());
                     dataset2 = TransactionTableClass.getInstance().getAllTransactionsForCFID(getSingleClickCfid());
                     break;
                 case Constants.INMEMCOM:
@@ -377,12 +446,11 @@ public class MemberComAccountSheet extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCreditButton;
-    private javax.swing.JButton addDebitButton;
+    private javax.swing.JButton addTransactionButton;
     private javax.swing.JTable allTransactionTable;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JButton refreshButton;
     // End of variables declaration//GEN-END:variables
 }
