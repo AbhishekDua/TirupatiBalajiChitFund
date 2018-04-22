@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import tirupatibalajichitfund.db.AllCommitteeClass;
 import tirupatibalajichitfund.db.MemberInfoData;
 import tirupatibalajichitfund.db.TransactionData;
+import tirupatibalajichitfund.utility.Constants;
 
 /**
  *
@@ -39,7 +40,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
         backButton.setEnabled(false);
         card = new CardLayout(0, 0);
         mainPanel.setLayout(card);
-        mainPanel.add("hello", new JPanel());
+        mainPanel.add("hello", new HomePanel());
         setHeading("  Welcome");
         currentPanel = "  Welcome";
 
@@ -97,6 +98,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
         menuCommittee = new javax.swing.JMenu();
         committeeAllComm = new javax.swing.JMenuItem();
         quickAddMemCom = new javax.swing.JMenuItem();
+        conductCommittee = new javax.swing.JMenuItem();
         menuMember = new javax.swing.JMenu();
         memberAllMember = new javax.swing.JMenuItem();
         memberQuickAddTransaction = new javax.swing.JMenuItem();
@@ -125,7 +127,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
         HeadingLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         backButton.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
-        backButton.setText("BACK");
+        backButton.setText("HOME");
         backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backButtonActionPerformed(evt);
@@ -193,6 +195,15 @@ public class MainFrameChitFund extends javax.swing.JFrame {
             }
         });
         menuCommittee.add(quickAddMemCom);
+
+        conductCommittee.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        conductCommittee.setText("Conduct Committee");
+        conductCommittee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conductCommitteeActionPerformed(evt);
+            }
+        });
+        menuCommittee.add(conductCommittee);
 
         menuBar.add(menuCommittee);
 
@@ -376,25 +387,35 @@ public class MainFrameChitFund extends javax.swing.JFrame {
     public void enableBack() {
         backButton.setEnabled(true);
     }
+    
+    private void loadHome(){
+     HomePanel hpanel=new HomePanel();
+            card = (CardLayout) mainPanel.getLayout();
+            setHeading("  Welcome");
+            currentPanel = "  Welcome";
+            card.show(mainPanel, "hello");
+    }
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         // TODO add your handling code here:
         if (backButton.equals(evt.getSource())) {
-            if (prevPanel != null && prevPanel != currentPanel) {
-                if (prevPanel.contains("Welcome")) {
-                    card = (CardLayout) mainPanel.getLayout();
-                    card.show(mainPanel, "hello");
-                    setHeading("  Welcome");
-                    currentPanel = "  Welcome";
-                    prevPanel = null;
-                    disableBack();
-                } else if (prevPanel.contains("Committee List")) {
-                    setupCommitteeTable();
-                } else if (prevPanel.contains("Member List")) {
-                    setupMemberTable();
-                }
-            } else {
-                disableBack();
-            }
+           loadHome();
+            
+//            if (prevPanel != null && prevPanel != currentPanel) {
+//                if (prevPanel.contains("Welcome")) {
+//                    card = (CardLayout) mainPanel.getLayout();
+//                    card.show(mainPanel, "hello");
+//                    setHeading("  Welcome");
+//                    currentPanel = "  Welcome";
+//                    prevPanel = null;
+//                    disableBack();
+//                } else if (prevPanel.contains("Committee List")) {
+//                    setupCommitteeTable();
+//                } else if (prevPanel.contains("Member List")) {
+//                    setupMemberTable();
+//                }
+//            } else {
+//                disableBack();
+//            }
         }
     }//GEN-LAST:event_backButtonActionPerformed
 
@@ -419,6 +440,19 @@ public class MainFrameChitFund extends javax.swing.JFrame {
             qat.setVisible(true);
         }
     }//GEN-LAST:event_memberQuickAddTransactionActionPerformed
+
+    private void conductCommitteeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conductCommitteeActionPerformed
+        // TODO add your handling code here:
+        if(conductCommittee.equals(evt.getSource())){
+            QuickAddTransaction qat=new QuickAddTransaction();
+            try {
+                qat.QuickAddForConduct("Conduct Committee",Constants.CONDUCT_COMMITTEE,AllCommitteeClass.getInstance().getAllCommitteesActive());
+            } catch (Exception ex) {
+                Logger.getLogger(MainFrameChitFund.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            qat.setVisible(true);
+        }
+    }//GEN-LAST:event_conductCommitteeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -463,6 +497,7 @@ public class MainFrameChitFund extends javax.swing.JFrame {
     private javax.swing.JLabel HeadingLabel;
     private javax.swing.JButton backButton;
     private javax.swing.JMenuItem committeeAllComm;
+    private javax.swing.JMenuItem conductCommittee;
     private javax.swing.JMenuItem fileClose;
     private javax.swing.JMenuItem fileOpen;
     private javax.swing.JMenuItem fileRefresh;

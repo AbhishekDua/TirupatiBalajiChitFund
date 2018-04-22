@@ -24,5 +24,7 @@ public class Constants {
     public static final String COMMITTEE = "COMMITTEE";
     
     public static final String QUICK_ADD = "QUICK_ADD";
+    
+    public static final String CONDUCT_COMMITTEE= "CONDUCT A COMMITTEE";
 
 }
